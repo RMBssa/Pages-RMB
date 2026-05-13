@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rafael Muniz Braga</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0b0c0f;
+      --surface: #13151a;
+      --border: #1e2128;
+      --accent: #c8f04a;
+      --accent2: #4af0c8;
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --tag-bg: #1a1f2b;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* GRAIN OVERLAY */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.5;
+    }
+
+    /* GITHUB ICON */
+    .github-link {
+      position: fixed;
+      top: 24px;
+      right: 28px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      transition: color 0.2s;
+    }
+    .github-link:hover { color: var(--accent); }
+    .github-link svg { width: 22px; height: 22px; fill: currentColor; transition: transform 0.25s; }
+    .github-link:hover svg { transform: rotate(-8deg) scale(1.1); }
+
+    /* LAYOUT */
+    .wrapper {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 0 60px;
+      position: relative;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.1s;
+    }
+
+    .hero-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(3.2rem, 8vw, 6.5rem);
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.2s;
+    }
+
+    .hero-name em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      margin-top: 28px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 480px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.35s;
+    }
+
+    .hero-meta {
+      margin-top: 40px;
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.5s;
+    }
+
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 999px;
+    }
+    .meta-pill span { color: var(--accent2); }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 36px;
+      left: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.8s;
+    }
+    .hero-scroll::after {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* BIG DIVIDER LINE */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: var(--border);
+      margin: 0;
+    }
+
+    /* SECTION */
+    section {
+      padding: 80px 0;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 36px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    /* BIO */
+    .bio-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.4rem, 3.5vw, 2.1rem);
+      line-height: 1.45;
+      color: var(--text);
+      max-width: 680px;
+    }
+    .bio-text em {
+      font-style: italic;
+      color: var(--accent2);
+    }
+
+    /* EXPERIENCE */
+    .exp-card {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 28px 32px;
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s;
+    }
+    .exp-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: var(--accent);
+    }
+    .exp-card:hover { border-color: #2e333e; }
+
+    .exp-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .exp-company {
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+    .exp-date {
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      margin-bottom: 16px;
+    }
+    .exp-desc {
+      font-size: 0.82rem;
+      line-height: 1.75;
+      color: var(--muted);
+    }
+
+    /* EDUCATION */
+    .edu-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media(max-width: 600px) { .edu-grid { grid-template-columns: 1fr; } }
+
+    .edu-card {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 24px 26px;
+      background: var(--surface);
+      transition: border-color 0.25s;
+    }
+    .edu-card:hover { border-color: #2e333e; }
+    .edu-school {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .edu-course {
+      font-size: 0.78rem;
+      color: var(--accent2);
+      margin-bottom: 10px;
+      letter-spacing: 0.04em;
+    }
+    .edu-period {
+      font-size: 0.66rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+    .edu-badge {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(200,240,74,0.1);
+      color: var(--accent);
+      border: 1px solid rgba(200,240,74,0.2);
+    }
+
+    /* SKILLS */
+    .skills-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .skill-tag {
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 8px 16px;
+      font-size: 0.76rem;
+      letter-spacing: 0.06em;
+      color: var(--text);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .skill-tag:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* INTERESTS */
+    .interests-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 16px;
+    }
+    .interest-item {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 20px;
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color 0.2s;
+    }
+    .interest-item:hover { border-color: var(--accent2); }
+    .interest-icon { font-size: 1.5rem; }
+    .interest-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 0.82rem;
+      color: var(--text);
+      letter-spacing: 0.04em;
+    }
+
+    /* CONTACT */
+    .contact-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      padding: 10px 20px;
+      border-radius: 3px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .contact-link:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* FOOTER */
+    footer {
+      padding: 32px 0;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* CURSOR DOT */
+    .cursor {
+      position: fixed;
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.1s;
+      mix-blend-mode: difference;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+
+  <!-- GitHub Icon -->
+  <a class="github-link" href="https://github.com/RMBssa/Pages-RMB" target="_blank" rel="noopener" title="Ver repositório">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+    </svg>
+    RMBssa/Pages-RMB
+  </a>
+
+  <div class="wrapper">
+
+    <!-- HERO -->
+    <section class="hero">
+      <p class="hero-eyebrow">Portfólio · Salvador → Brasília</p>
+      <h1 class="hero-name">Rafael<br /><em>Muniz</em><br />Braga</h1>
+      <p class="hero-sub">
+        Estudante de Ciência da Computação, entusiasta de robótica, arte e literatura.
+        Altas habilidades · Inglês C1 · Fascinado pela interseção entre tecnologia e cultura.
+      </p>
+      <div class="hero-meta">
+        <span class="meta-pill"><span>●</span> Salvador, BA → Brasília, DF</span>
+        <span class="meta-pill"><span>●</span> CEUB · 1º semestre</span>
+        <span class="meta-pill"><span>●</span> Nascido em 10/02/2006</span>
+      </div>
+      <p class="hero-scroll">scroll para explorar</p>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- BIO -->
+    <section class="reveal">
+      <p class="section-label">Sobre</p>
+      <p class="bio-text">
+        Cresci em Salvador durante 7 anos antes de vir para Brasília.
+        Sou <em>diagnosticado com altas habilidades</em> e participei de um grupo de apoio
+        sob mentoria de Francisco Salles. Já me envolvi em robótica e
+        participei da <em>OBR</em> — Olimpíada Brasileira de Robótica.
+      </p>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- EXPERIÊNCIA -->
+    <section class="reveal">
+      <p class="section-label">Experiência</p>
+      <div class="exp-card">
+        <p class="exp-title">Assistente de Engenheiro de Sistemas e Redes & Intérprete</p>
+        <p class="exp-company">Bem Comunicação / Sandora</p>
+        <p class="exp-date">05/05/2025 — 23/05/2025</p>
+        <p class="exp-desc">
+          Atuei como intérprete para um engenheiro da Sandora contratado para montar a exposição
+          em Realidade Virtual <strong style="color:var(--text)">Napoleon Experience</strong>.
+          Por afinidade e interesse, tornei-me assistente na implementação de servidores,
+          redes e mapeamento, além de instruir a equipe de atendimento ao público.
+        </p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- FORMAÇÃO -->
+    <section class="reveal">
+      <p class="section-label">Formação</p>
+      <div class="edu-grid">
+        <div class="edu-card">
+          <p class="edu-school">CEUB — Campus Asa Norte</p>
+          <p class="edu-course">Ciência da Computação</p>
+          <p class="edu-period">FEV 2026 — Cursando</p>
+          <span class="edu-badge">EM ANDAMENTO</span>
+        </div>
+        <div class="edu-card">
+          <p class="edu-school">CEUB — Campus Asa Norte</p>
+          <p class="edu-course">Ciência de Dados e Machine Learning</p>
+          <p class="edu-period">FEV 2024 — DEZ 2025</p>
+          <span class="edu-badge" style="background:rgba(74,240,200,0.08);color:var(--accent2);border-color:rgba(74,240,200,0.2)">CONCLUÍDO</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- COMPETÊNCIAS -->
+    <section class="reveal">
+      <p class="section-label">Competências</p>
+      <div class="skills-list">
+        <span class="skill-tag">Java</span>
+        <span class="skill-tag">C</span>
+        <span class="skill-tag">SQL</span>
+        <span class="skill-tag">Python</span>
+        <span class="skill-tag">NumPy</span>
+        <span class="skill-tag">Pandas</span>
+        <span class="skill-tag">Matplotlib</span>
+        <span class="skill-tag">Redes & Servidores</span>
+        <span class="skill-tag">Robótica</span>
+        <span class="skill-tag">Inglês C1</span>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- INTERESSES -->
+    <section class="reveal">
+      <p class="section-label">Interesses</p>
+      <div class="interests-grid">
+        <div class="interest-item">
+          <span class="interest-icon">🤖</span>
+          <span class="interest-name">Robótica</span>
+        </div>
+        <div class="interest-item">
+          <span class="interest-icon">🎨</span>
+          <span class="interest-name">Arte</span>
+        </div>
+        <div class="interest-item">
+          <span class="interest-icon">📚</span>
+          <span class="interest-name">Literatura</span>
+        </div>
+        <div class="interest-item">
+          <span class="interest-icon">🦸</span>
+          <span class="interest-name">Quadrinhos</span>
+        </div>
+        <div class="interest-item">
+          <span class="interest-icon">🎵</span>
+          <span class="interest-name">Música</span>
+        </div>
+        <div class="interest-item">
+          <span class="interest-icon">💻</span>
+          <span class="interest-name">Computação</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- CONTATO -->
+    <section class="reveal">
+      <p class="section-label">Contato</p>
+      <div class="contact-row">
+        <a class="contact-link" href="mailto:munizbragar@gmail.com">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          munizbragar@gmail.com
+        </a>
+        <a class="contact-link" href="tel:+5561986441002">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+          +55 61 98644-1002
+        </a>
+        <a class="contact-link" href="https://github.com/RMBssa/Pages-RMB" target="_blank" rel="noopener">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+          GitHub
+        </a>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <span>© 2026 · RAFAEL MUNIZ BRAGA</span>
+      <span>BRASÍLIA, DF · BRASIL</span>
+    </footer>
+
+  </div>
+
+  <script>
+    // Cursor
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX - 3 + 'px';
+      cursor.style.top  = e.clientY - 3 + 'px';
+    });
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
